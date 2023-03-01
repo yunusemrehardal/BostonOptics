@@ -1,0 +1,138 @@
+﻿@model BasketViewModel
+@{
+    ViewData["Title"] = "Basket";
+}
+
+<form asp-action="Update" method="post">
+    <!--Section: Block Content-->
+    <section>
+
+        <!--Grid row-->
+        <div class="row">
+
+            <!--Grid column-->
+            <div class="col-lg-8">
+                <!-- Card -->
+                <div class="mb-3">
+                    <div class="pt-4">
+
+                        <div class="d-flex justify-content-between align-items-baseline">
+                            <h5 class="mb-4">Cart (<span>@Model.TotalItems</span> items)</h5>
+
+                            <div>
+                                <a id="btnEmpty" href="#" class="btn btn-sm btn-danger">Empty Cart</a>
+                                <button class="btn btn-sm btn-success ms-2">Update Cart</button>
+                            </div>
+                        </div>
+
+                        @if (Model.TotalItems == 0)
+                        {
+                            <div class="card mb-4">
+                                <div class="card-body text-center py-5">
+                                    Your basket is empty.
+                                </div>
+                            </div>
+                        }
+
+                        @foreach (var item in Model.Items)
+                        {
+                            <div class="row mb-4">
+                                <div class="col-sm-3 col-lg-2 col-xl-2">
+                                    <div class="rounded mb-3 mb-md-0">
+                                        <img class="img-fluid w-100" src="~/img/products/@item.PictureUri" alt="@item.ProductName">
+                                    </div>
+                                </div>
+                                <div class="col-sm-9 col-lg-10 col-xl-10">
+                                    <div>
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h5>@item.ProductName</h5>
+                                                <p class="mb-3 text-muted text-uppercase small">Unit Price: @item.UnitPrice.ToString("c2")</p>
+                                            </div>
+                                            <div>
+                                                <div class="number-input mb-0">
+                                                    <input class="quantity form-control" min="1" name="quantities[@item.ProductId]" value="@item.Quantity" type="number">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <a data-delete="@item.ProductId" href="#!" type="button" class="text-decoration-none small text-uppercase me-3">
+                                                    <i class="fas fa-trash-alt me-1"></i> Remove item
+                                                </a>
+                                                <a href="#!" type="button" class="text-decoration-none small text-uppercase">
+                                                    <i class="fas fa-heart me-1"></i> Move to wish list
+                                                </a>
+                                            </div>
+                                            <p class="mb-0"><span><strong id="summary">@item.TotalPrice.ToString("c2")</strong></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="mb-4">
+                        }
+                    </div>
+                </div>
+                <!-- Card -->
+            </div>
+            <!--Grid column-->
+            <!--Grid column-->
+            <div class="col-lg-4 ps-lg-5">
+
+                <!-- Card -->
+                <div class="mb-3">
+                    <div class="pt-4">
+
+                        <h5 class="mb-3">Total Price</h5>
+
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                Subtotal
+                                <span>@Model.TotalPrice.ToString("c2")</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                Shipping
+                                <span>Free</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3 fw-bold">
+                                <span>The total amount of <br /> (including taxes)</span>
+                                <span>@Model.TotalPrice.ToString("c2")</span>
+                            </li>
+                        </ul>
+
+                        <a class="btn btn-primary d-block" asp-action="Checkout">Go To Checkout</a>
+
+                    </div>
+                </div>
+                <!-- Card -->
+
+            </div>
+            <!--Grid column-->
+
+        </div>
+        <!-- Grid row -->
+
+    </section>
+</form>
+
+
+<form id="frmEmpty" asp-action="Empty" method="post"></form>
+<form id="frmDelete" asp-action="Delete" method="post">
+    <input id="hdnProductId" type="hidden" name="productId" value="" />
+</form>
+
+@section Scripts {
+    <script>
+        $("#btnEmpty").click(function (event) {
+            event.preventDefault();
+            $("#frmEmpty").submit();
+        });
+
+        $("[data-delete]").click(function (event) {
+            event.preventDefault();
+            let productId = $(this).data("delete");
+            $("#hdnProductId").val(productId);
+            $("#frmDelete").submit();
+        })
+    </script>
+}
